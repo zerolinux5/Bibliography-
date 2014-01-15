@@ -1,4 +1,6 @@
 --Jesus Magana
+--No partner
+--jmaganat
 
 --2) this returns the second return, the first string
 citeAuthor :: String -> String -> String
@@ -48,5 +50,21 @@ references :: String -> Int
 references x = length (filter ( `contains` ']') (filter ( `contains` '[') (words x))) 
 
 --10)This function replaces reference numbers with the corresponding list element
+--Here I go through a string and find its first number and return it
+findNum :: String -> Int
+findNum [] = 0
+findNum (x:xs)
+	| ( x `elem` ['0'..'9']) = read [x]::Int
+	| otherwise = findNum xs
+
+--Here I go through the string given and replace all instances of [n] with the corresponding 
+--element from the list given
+parse :: [(String, String, Int)] -> [String] -> [String]
+parse y [] = []
+parse y (x:xs)
+	| ((contains x '[') && (contains x ']')) = citeBook (y!!((findNum x)-1)) : parse y xs
+	| otherwise = x: parse y xs
+
+--This function puts the string back together that is returned from parse
 citeText :: [(String, String, Int)] -> String -> String
-citeText y x = unwords ( (words x))
+citeText y x = unwords ( parse y (words x))
